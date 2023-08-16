@@ -1,0 +1,14 @@
+nav {
+    background-color: rgb(126, 215, 252);
+    display: flex;
+}
+.nav-item{
+    padding: 15px;
+    cursor: pointer;
+   text-decoration: none;
+   display: flex;
+   flex-direction: row;
+}
+body{
+    margin: 0;
+}
