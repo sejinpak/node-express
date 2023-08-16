@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>오늘 급식</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+</head>
+
+<body>
+   <nav id="nav-bar">
+        <div id="nav-item">
+           <h1 style="color: white;">오늘 급식</h1>
+        </div>
+    </nav>
+    <div style="text-align: center;">
+        <h1>시도교육청 선택</h1>
+        <select id="Educationis" style="font-size:x-large; text-align: center;cursor: pointer;">
+            <option value="" disabled selected hidden>선택해주세요</option>
+            <option value="B10">서울특별시교육청</option>
+            <option value="C10">부산광역시교육청</option>
+            <option value="D10">대구광역시교육청</option>
+            <option value="E10">인천광역시교육청</option>
+            <option value="F10">광주광역시교육청</option>
+            <option value="G10">대전광역시교육청</option>
+            <option value="H10">울산광역시교육청</option>
+            <option value="I10">세종특별자치시교육청</option>
+            <option value="J10">경기도교육청</option>
+            <option value="K10">강원특별자치도교육청</option>
+            <option value="M10">충청북도교육청</option>
+            <option value="N10">충청남도교육청</option>
+            <option value="P10">전라북도교육청</option>
+            <option value="Q10">전라남도교육청</option>
+            <option value="R10">경상북도교육청</option>
+            <option value="S10">경상남도교육청</option>
+            <option value="T10">제주특별자치도교육청</option>
+        </select>
+        <p></p>
+        <input type="text" id="sn" placeholder="학교이름" style="text-align: left; font-size: x-large;">
+
+
+        <p></p>
+        일자
+        <input id="day" type="date"
+            style="font-size: x-large; border-radius: 8px;border: 0px; background-color: rgb(126, 215, 252); color: white; cursor: pointer; ">
+
+        <button id="schoolfind"
+            style="font-size: x-large; border-radius: 8px;border: 0px; background-color: rgb(126, 215, 252); color: white; cursor: pointer;">조회</button>
+        <h4 id="name"></h1>
+    </div>
+    <script>
+        let a
+        document.getElementById('schoolfind').onclick = function () {
+            if (document.getElementById('Educationis').value != null && document.getElementById('sn').value && document.getElementById('day').value) {
+                fetch('/search/' + document.getElementById('sn').value + '/' + document.getElementById('Educationis').value).then((response) => response.json())//읽어온 데이터를 json으로 변환
+                    .then((json) => {
+                        a = json.schoolInfo[1].row[0]
+console.log('https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=49dccbb15f414852936a5870bd0a0545&Type=json&ATPT_OFCDC_SC_CODE=' + a.ATPT_OFCDC_SC_CODE + '&SD_SCHUL_CODE=' + a.SD_SCHUL_CODE + "&MLSV_YMD=" + document.getElementById('day').value.replace(/-/g, ''))
+                        fetch('https://open.neis.go.kr/hub/mealServiceDietInfo?KEY=49dccbb15f414852936a5870bd0a0545&Type=json&ATPT_OFCDC_SC_CODE=' + a.ATPT_OFCDC_SC_CODE + '&SD_SCHUL_CODE=' + a.SD_SCHUL_CODE + "&MLSV_YMD=" + document.getElementById('day').value.replace(/-/g, '')).then((response) => response.json()).then((json) => {
+                            console.log(json)
+                            const ddishNames = json.mealServiceDietInfo[1].row.map(row => row.DDISH_NM).join('\n');
+                            const calInfo = json.mealServiceDietInfo[1].row.map(row => row.CAL_INFO).join('\n');
+                            const ntrInfo = json.mealServiceDietInfo[1].row.map(row => row.NTR_INFO).join('\n');
+                            const allergens = `알레르기 유발 식재료 번호 : 1.난류, 2.우유, 3.메밀, 4.땅콩, 5.대두, 6.밀, 7.고등어, 8.게, 9.새우, 10.돼지고기, 11.복숭아, 12.토마토, 13.아황산류, 14.호두,
+15.닭고기, 16.쇠고기, 17.오징어, 18.조개류(굴, 전복, 홍합 포함), 19.잣`;
+
+                            document.getElementById('name').innerHTML = `${ddishNames}<br>${calInfo}<br>${ntrInfo}<br><br>${allergens}`;
+                        })
+                            .catch((error) => {
+                                document.getElementById('name').textContent = "해당하는 데이터가 없습니다. [나이스에 등록이 되지 않았음]"
+                            });
+                    }).catch((error) => {
+                                document.getElementById('name').textContent = "해당하는 데이터가 없습니다. [나이스에 등록이 되지 않았음]"
+                            });
+            } else {
+                alert('시도교육청/학교이름/일자 필드를 채우세요!')
+            }
+
+        }
+    </script>
+</body>
+
+</html>
