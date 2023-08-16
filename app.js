@@ -1,8 +1,8 @@
 const express = require('express')
 const app = express()
-app.listen(3000,()=>{
-    console.log('서버온')
-})
+// app.listen(3000,()=>{
+//     console.log('서버온')
+// })
 app.get('/search/:name/:code',(req,res)=>{
     let { name,code } = req.params;
     fetch('https://open.neis.go.kr/hub/schoolInfo?KEY=49dccbb15f414852936a5870bd0a0545&Type=json&SCHUL_NM='+name+'&ATPT_OFCDC_SC_CODE='+code).then((response) => response.json())//읽어온 데이터를 json으로 변환
